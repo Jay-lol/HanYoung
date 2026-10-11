@@ -1,5 +1,5 @@
 // 앱 아이콘 생성기: 남색 배경 위에 메뉴바와 같은 KO(채움)/EN(테두리) 배지를 겹쳐 그린다.
-// 사용법: swift IconGenerator.swift <출력 .iconset 디렉터리>  →  iconutil -c icns <디렉터리> -o AppIcon.icns
+// 사용법: swift Tools/IconGenerator.swift build/AppIcon.iconset && iconutil -c icns build/AppIcon.iconset -o Resources/AppIcon.icns
 import AppKit
 
 func drawIcon(size: CGFloat) -> NSBitmapImageRep {

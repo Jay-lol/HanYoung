@@ -33,14 +33,20 @@ macOS 26에서 확인한 점:
 - 누름·뗌을 1ms 간격으로 붙여 보내면 macOS가 단축키로 받지 않는다 → 30ms 간격
 - F19 이벤트에 fn 플래그가 붙어 와서, 수식키 없는 F19 단축키로는 영어→한글 전환이 안 된다 → fn+F19
 
-## 파일
+## 구조
 
-| 파일 | 내용 |
-|---|---|
-| `HanYoung.swift` | 앱 전체 |
-| `build.sh` | 빌드, `install`이면 /Applications에 설치 후 실행 |
-| `IconGenerator.swift` | 앱 아이콘 생성 (`AppIcon.icns`) |
-| `Bridge.h` | IOKit HID 헤더 |
+```
+Sources/
+├── App/main.swift                 앱 시작, 각 부분 연결
+├── Keyboard/KeyMapping.swift      Caps Lock→F19 HID 매핑, 시스템 단축키
+├── Keyboard/Switcher.swift        이벤트 탭, 전환 신호, 길게 눌러 Caps Lock
+├── InputSource/InputSource.swift  현재 입력 소스, 한/영 선택, 기본 입력기 아이콘 숨김
+├── Menu/StatusMenu.swift          KO/EN 배지, 메뉴바 메뉴
+└── Bridge.h                       IOKit HID 헤더
+Resources/                         Info.plist, AppIcon.icns
+Tools/IconGenerator.swift          앱 아이콘 생성
+build.sh                           빌드, `install`이면 /Applications에 설치 후 실행
+```
 
 ## 라이선스
 
