@@ -12,11 +12,11 @@ xcrun swiftc -O -import-objc-header Sources/Bridge.h $(find Sources -name "*.swi
   -target "$(uname -m)-apple-macos13.0" -o "$app/Contents/MacOS/HanYoung"
 cp Resources/Info.plist "$app/Contents/Info.plist"
 mkdir -p "$app/Contents/Resources" && cp Resources/AppIcon.icns "$app/Contents/Resources/"
-codesign --force --sign - --identifier com.jaylol.hanyoung "$app"
+codesign --force --sign - --identifier dev.jay.hanyoung "$app"
 if [[ ${1:-} == install ]]; then
   pkill -x HanYoung || true
   rm -rf /Applications/HanYoung.app && cp -R "$app" /Applications/
-  tccutil reset Accessibility com.jaylol.hanyoung >/dev/null
+  tccutil reset Accessibility dev.jay.hanyoung >/dev/null 2>&1 || true  # 처음 설치면 지울 항목이 없다
   open /Applications/HanYoung.app
 fi
 echo "Built $app"
