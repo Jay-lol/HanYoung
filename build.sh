@@ -1,5 +1,6 @@
 #!/bin/bash
-# HanYoung.app을 빌드한다. `install`을 주면 /Applications에 설치하고 실행한다.
+# HanYoung.app을 빌드한다(Apple Silicon + Intel 유니버설).
+# `install`: /Applications에 설치하고 실행  `release`: 배포용 zip(build/HanYoung-<버전>.zip) 생성
 # 아이콘은 Tools/IconGenerator.swift로 만든다: swift Tools/IconGenerator.swift build/AppIcon.iconset && iconutil -c icns build/AppIcon.iconset -o Resources/AppIcon.icns
 # ad-hoc 서명이라 빌드할 때마다 앱 식별값이 바뀌므로, 설치 시 예전 손쉬운 사용 권한을 지우고 새로 허용받는다.
 set -euo pipefail
@@ -8,11 +9,19 @@ cd "$(dirname "$0")"
 if [[ -z ${DEVELOPER_DIR:-} && -d /Applications/Xcode.app ]]; then export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer; fi
 app=build/HanYoung.app
 rm -rf build && mkdir -p "$app/Contents/MacOS"
-xcrun swiftc -O -import-objc-header Sources/Bridge.h $(find Sources -name "*.swift") -framework AppKit -framework IOKit -framework ServiceManagement \
-  -target "$(uname -m)-apple-macos13.0" -o "$app/Contents/MacOS/HanYoung"
+for arch in arm64 x86_64; do
+  xcrun swiftc -O -import-objc-header Sources/Bridge.h $(find Sources -name "*.swift") -framework AppKit -framework IOKit -framework ServiceManagement \
+    -module-cache-path build/module-cache -target "$arch-apple-macos13.0" -o "build/HanYoung-$arch"
+done
+lipo -create build/HanYoung-arm64 build/HanYoung-x86_64 -output "$app/Contents/MacOS/HanYoung"
 cp Resources/Info.plist "$app/Contents/Info.plist"
 mkdir -p "$app/Contents/Resources" && cp Resources/AppIcon.icns "$app/Contents/Resources/"
 codesign --force --sign - --identifier dev.jay.hanyoung "$app"
+if [[ ${1:-} == release ]]; then
+  version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Resources/Info.plist)
+  ditto -c -k --keepParent --norsrc "$app" "build/HanYoung-$version.zip"
+  echo "Release zip: build/HanYoung-$version.zip"
+fi
 if [[ ${1:-} == install ]]; then
   pkill -x HanYoung || true
   rm -rf /Applications/HanYoung.app && cp -R "$app" /Applications/

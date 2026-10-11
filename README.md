@@ -20,7 +20,16 @@ macOS 기본 입력기 메뉴바 아이콘은 HanYoung이 실행되는 동안 �
 
 ## 설치
 
-**요구 사항**: macOS 13 이상, Xcode (또는 Command Line Tools)
+### 다운로드
+
+1. [Releases](https://github.com/Jay-lol/HanYoung/releases/latest)에서 `HanYoung-<버전>.zip`을 받아 압축을 풉니다.
+2. `HanYoung.app`을 **응용 프로그램** 폴더로 옮기고 실행합니다.
+3. Apple 개발자 인증서가 없는 앱이라 처음엔 macOS가 막습니다. 시스템 설정 → 개인정보 보호 및 보안 → 아래쪽 **"그래도 열기"**를 누르세요.
+   터미널로는 `xattr -dr com.apple.quarantine /Applications/HanYoung.app`
+
+### 소스에서 빌드
+
+macOS 13 이상, Xcode (또는 Command Line Tools) 필요.
 
 ```sh
 git clone https://github.com/Jay-lol/HanYoung.git
@@ -70,7 +79,7 @@ Sources/
 └── Bridge.h                       IOKit HID 헤더
 Resources/                         Info.plist, AppIcon.icns
 Tools/IconGenerator.swift          앱 아이콘 생성
-build.sh                           빌드 (install: /Applications에 설치 후 실행)
+build.sh                           빌드 (install: 설치 후 실행, release: 배포용 zip)
 ```
 
 ## 라이선스
