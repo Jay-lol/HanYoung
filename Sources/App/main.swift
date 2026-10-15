@@ -29,12 +29,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         KeyMapping.apply(false)
+        KeyMapping.restoreSwitchShortcut()
         SystemInputMenu.restore()
     }
 
     private func toggleEnabled() {
         switcher.enabled.toggle()
         KeyMapping.apply(switcher.enabled)
+        if switcher.enabled { KeyMapping.setSwitchShortcut() } else { KeyMapping.restoreSwitchShortcut() }
         menu.refresh()
     }
 }
