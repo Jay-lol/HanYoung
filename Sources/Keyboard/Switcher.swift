@@ -62,7 +62,9 @@ final class Switcher {
         guard enabled, event.getIntegerValueField(.keyboardEventKeycode) == f19KeyCode,
               event.getIntegerValueField(.eventSourceUserData) != marker else { return false }
         if type == .keyDown {
-            if event.getIntegerValueField(.keyboardEventAutorepeat) == 0 && pressEvent == nil {
+            // 반복이 아닌 누름은 항상 새 누름으로 받는다. 뗌을 놓쳐 이전 누름이 남아 있어도 여기서 정리된다.
+            if event.getIntegerValueField(.keyboardEventAutorepeat) == 0 {
+                longPressTimer?.cancel()
                 pressEvent = event.copy()
                 capsBeforePress = capsLockOn
                 postSwitch(from: event)
